@@ -39,10 +39,10 @@ def plot_monte_carlo_average(data, simulations, label):
 3. Define your stock portfolio and set the start and end dates for the simulation.
 
 ```
-# Define portfolio as a dictionary with tickers and corresponding percentages
+#Define portfolio as a dictionary with tickers and corresponding percentages
 portfolio = {"AAPL": 0.4, "TSLA": 0.4, "NVDA": 0.2}
 
-# Loop through each stock in the portfolio
+#Loop through each stock in the portfolio
 daily_percentage_dict_portfolio = None
 start_date_portfolio = "2022-01-01"
 end_date_portfolio = "2023-10-01"
@@ -54,7 +54,7 @@ end_date_portfolio = "2023-10-01"
 for stock_ticker, weight in portfolio.items():
     # Implementation...
 
-# Calculate the weighted average close prices across all stocks in the portfolio
+#Calculate the weighted average close prices across all stocks in the portfolio
 daily_percentage_dict_portfolio['Average'] = daily_percentage_dict_portfolio.sum(axis=1)
 ```
 
@@ -82,7 +82,7 @@ sp500_data = yf.download('^GSPC', start=start_date_portfolio, end=end_date_portf
 sp500_close_prices_percentage = (sp500_data['Close'] / sp500_data['Open'].iloc[0]) * 100
 ```
 
-# Monte Carlo simulation with geometric Brownian motion for ^GSPC
+#Monte Carlo simulation with geometric Brownian motion for ^GSPC
 
 ```
 num_simulations_sp500 = 1000
