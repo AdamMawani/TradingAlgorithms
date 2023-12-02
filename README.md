@@ -8,6 +8,7 @@ Before running the program, make sure to have the required Python libraries inst
 
 ```bash
 pip install yfinance numpy matplotlib pandas
+```
 
 ## How to Use
 1. Import the necessary libraries:
