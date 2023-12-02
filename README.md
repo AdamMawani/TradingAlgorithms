@@ -48,28 +48,13 @@ start_date_portfolio = "2022-01-01"
 end_date_portfolio = "2023-10-01"
 ```
 
-# Define portfolio as a dictionary with tickers and corresponding percentages
-```
-portfolio = {"AAPL": 0.4, "TSLA": 0.4, "NVDA": 0.2}
-```
-
-# Loop through each stock in the portfolio
-```
-daily_percentage_dict_portfolio = None
-start_date_portfolio = "2022-01-01"
-end_date_portfolio = "2023-10-01"
-```
-
 4. Fetch and process stock data for each stock in the portfolio.
 
 ```
 for stock_ticker, weight in portfolio.items():
     # Implementation...
-```
 
 # Calculate the weighted average close prices across all stocks in the portfolio
-
-```
 daily_percentage_dict_portfolio['Average'] = daily_percentage_dict_portfolio.sum(axis=1)
 ```
 
