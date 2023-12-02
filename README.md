@@ -38,6 +38,7 @@ def plot_monte_carlo_average(data, simulations, label):
 
 3. Define your stock portfolio and set the start and end dates for the simulation.
 
+```
 # Define portfolio as a dictionary with tickers and corresponding percentages
 portfolio = {"AAPL": 0.4, "TSLA": 0.4, "NVDA": 0.2}
 
@@ -45,50 +46,81 @@ portfolio = {"AAPL": 0.4, "TSLA": 0.4, "NVDA": 0.2}
 daily_percentage_dict_portfolio = None
 start_date_portfolio = "2022-01-01"
 end_date_portfolio = "2023-10-01"
+```
+
+# Define portfolio as a dictionary with tickers and corresponding percentages
+```
+portfolio = {"AAPL": 0.4, "TSLA": 0.4, "NVDA": 0.2}
+```
+
+# Loop through each stock in the portfolio
+```
+daily_percentage_dict_portfolio = None
+start_date_portfolio = "2022-01-01"
+end_date_portfolio = "2023-10-01"
+```
 
 4. Fetch and process stock data for each stock in the portfolio.
 
+```
 for stock_ticker, weight in portfolio.items():
     # Implementation...
+```
 
 # Calculate the weighted average close prices across all stocks in the portfolio
+
+```
 daily_percentage_dict_portfolio['Average'] = daily_percentage_dict_portfolio.sum(axis=1)
+```
 
 5. Perform Monte Carlo simulation for the portfolio.
 
+```
 # Monte Carlo simulation with geometric Brownian motion for the portfolio
 num_simulations_portfolio = 1000
 forecast_period_portfolio = 66  # Approximately 3 months (assuming 22 business days per month)
 portfolio_simulations = monte_carlo_simulation_gbm(daily_percentage_dict_portfolio['Average'], num_simulations_portfolio, forecast_period_portfolio)
+```
 
 6. Plot the results for the portfolio.
 
+```
 # Plot the average of Monte Carlo simulations for the portfolio
 plot_monte_carlo_average(daily_percentage_dict_portfolio['Average'], portfolio_simulations, label="Portfolio")
+```
 
 7. Perform Monte Carlo simulation for the S&P 500.
 
+```
 # Get data for ^GSPC
 sp500_data = yf.download('^GSPC', start=start_date_portfolio, end=end_date_portfolio)
 sp500_close_prices_percentage = (sp500_data['Close'] / sp500_data['Open'].iloc[0]) * 100
+```
 
 # Monte Carlo simulation with geometric Brownian motion for ^GSPC
+
+```
 num_simulations_sp500 = 1000
 forecast_period_sp500 = 66  # Approximately 3 months (assuming 22 business days per month)
 sp500_simulations = monte_carlo_simulation_gbm(sp500_close_prices_percentage, num_simulations_sp500, forecast_period_sp500)
+```
 
 8. Plot the results for the S&P 500.
 
+```
 # Plot the average of Monte Carlo simulations for ^GSPC
 plot_monte_carlo_average(sp500_close_prices_percentage, sp500_simulations, label="S&P 500")
+```
 
 9. Add labels and legend, then display the plot.
 
+```
 # Add labels and legend
 plt.xlabel("Date")
 plt.ylabel("Close Price Percentage")
 plt.title("Stock Portfolio and S&P 500 Performance with Monte Carlo Simulation")
 plt.legend()
 plt.show()
+```
 
 Feel free to customize the stock portfolio, simulation parameters, and plotting options according to your needs.
