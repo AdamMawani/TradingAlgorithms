@@ -80,11 +80,8 @@ plot_monte_carlo_average(daily_percentage_dict_portfolio['Average'], portfolio_s
 # Get data for ^GSPC
 sp500_data = yf.download('^GSPC', start=start_date_portfolio, end=end_date_portfolio)
 sp500_close_prices_percentage = (sp500_data['Close'] / sp500_data['Open'].iloc[0]) * 100
-```
 
 #Monte Carlo simulation with geometric Brownian motion for ^GSPC
-
-```
 num_simulations_sp500 = 1000
 forecast_period_sp500 = 66  # Approximately 3 months (assuming 22 business days per month)
 sp500_simulations = monte_carlo_simulation_gbm(sp500_close_prices_percentage, num_simulations_sp500, forecast_period_sp500)
