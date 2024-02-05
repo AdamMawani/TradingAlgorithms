@@ -36,7 +36,7 @@ def plot_monte_carlo_average(data, simulations, label):
     plt.plot(data.index[-1] + pd.to_timedelta(np.arange(1, len(average_simulation) + 1), unit='D'), average_simulation, label=label + " (Average Prediction)", linestyle='--', linewidth=2, color='red')
 
 # Define portfolio as a dictionary with tickers and corresponding percentages
-portfolio = {"AAPL": 0.66, "ENB": 0.66, "QQQ": 0.66, "SPY": 0.66, "NVDA": 0.66, "MSFT": 0.66, "GOOG": 0.66, "MA": 0.66, "VZ": 0.66, "T": 0.66, "AMZN": 0.66, "C": 0.66, "RY": 0.66, "BNS": 0.66, "BAC": 0.66, "UBER": 0.66}
+portfolio = {"ENB": 0.15, "QQQ": 0.15, "SPY": 0.05, "NVDA": 0.1, "MSFT": 0.07, "GOOG": 0.05, "VZ": 0.07, "T": 0.05, "AMZN": 0.07, "C": 0.03, "RY": 0.05, "BNS": 0.03, "BAC": 0.03, "MA": 0.05, "UBER": 0.05}
 
 # Loop through each stock in the portfolio
 daily_percentage_dict_portfolio = None
