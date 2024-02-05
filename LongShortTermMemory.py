@@ -7,7 +7,7 @@ from keras.models import Sequential
 from keras.layers import LSTM, Dense
 
 # Define portfolio
-portfolio = {"AAPL": 0.1, "TSLA": 0.9}
+portfolio = {"AAPL": 0.66, "ENB": 0.66, "QQQ": 0.66, "SPY": 0.66, "NVDA": 0.66, "MSFT": 0.66, "GOOG": 0.66, "MA": 0.66, "VZ": 0.66, "T": 0.66, "AMZN": 0.66, "C": 0.66, "RY": 0.66, "BNS": 0.66, "BAC": 0.66, "UBER": 0.66}
 
 # Fetch historical data for each stock in the portfolio
 start_date = "2020-01-01"
