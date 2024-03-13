@@ -72,31 +72,26 @@ def predict(model, X_test):
     """
     return model.predict(X_test)
 
-# Example usage
 if __name__ == "__main__":
-    # List of stock tickers
-    tickers = ['AAPL', 'MSFT', 'GOOG', 'AMZN', 'FB']
+    # User input for stock ticker
+    ticker = input("Enter a stock ticker symbol (e.g., 'AAPL' for Apple Inc.): ")
 
-    for ticker in tickers:
-        print(f"Processing {ticker}...")
-        
-        # Fetch historical data
-        stock_data = get_stock_data(ticker, '2020-01-01', '2024-01-01')
+    # Fetch historical data
+    stock_data = get_stock_data(ticker, '2020-01-01', '2024-01-01')
 
-        # Prepare data
-        X, y = prepare_data(stock_data)
+    # Prepare data
+    X, y = prepare_data(stock_data)
 
-        # Split data into training and testing sets
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    # Split data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-        # Train model
-        model = train_model(X_train, y_train)
+    # Train model
+    model = train_model(X_train, y_train)
 
-        # Predict stock prices
-        predictions = predict(model, X_test)
+    # Predict stock prices
+    predictions = predict(model, X_test)
 
-        # Print example predictions
-        print("Example predictions:")
-        for i in range(5):
-            print("Predicted:", predictions[i], "Actual:", y_test[i])
-        print("\n")
+    # Print example predictions
+    print("Example predictions:")
+    for i in range(5):
+        print("Predicted:", predictions[i], "Actual:", y_test[i])
