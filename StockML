@@ -1,0 +1,95 @@
+import yfinance as yf
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+def get_stock_data(ticker, start_date, end_date):
+    """
+    Fetches historical stock data using yfinance.
+
+    Parameters:
+    - ticker: Stock ticker symbol (e.g., 'AAPL' for Apple Inc.)
+    - start_date: Start date for historical data (YYYY-MM-DD)
+    - end_date: End date for historical data (YYYY-MM-DD)
+
+    Returns:
+    - DataFrame containing historical stock data
+    """
+    stock_data = yf.download(ticker, start=start_date, end=end_date)
+    return stock_data
+
+def prepare_data(stock_data, window_size=10):
+    """
+    Prepares the data for machine learning.
+
+    Parameters:
+    - stock_data: DataFrame containing historical stock data
+    - window_size: Size of the window for feature extraction (default is 10)
+
+    Returns:
+    - X: Features matrix
+    - y: Target vector
+    """
+    # Calculate additional features
+    stock_data['SMA'] = stock_data['Close'].rolling(window=window_size).mean()
+    stock_data['EMA'] = stock_data['Close'].ewm(span=window_size, adjust=False).mean()
+    stock_data['Returns'] = stock_data['Close'].pct_change()
+
+    # Drop NaN values
+    stock_data.dropna(inplace=True)
+
+    # Features and target
+    X = stock_data[['SMA', 'EMA', 'Returns']].values
+    y = stock_data['Close'].values
+
+    return X, y
+
+def train_model(X_train, y_train):
+    """
+    Trains a linear regression model.
+
+    Parameters:
+    - X_train: Training features matrix
+    - y_train: Training target vector
+
+    Returns:
+    - Trained linear regression model
+    """
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+    return model
+
+def predict(model, X_test):
+    """
+    Predicts stock prices using the trained model.
+
+    Parameters:
+    - model: Trained machine learning model
+    - X_test: Test features matrix
+
+    Returns:
+    - Predicted stock prices
+    """
+    return model.predict(X_test)
+
+# Example usage
+if __name__ == "__main__":
+    # Fetch historical data
+    stock_data = get_stock_data('AAPL', '2020-01-01', '2024-01-01')
+
+    # Prepare data
+    X, y = prepare_data(stock_data)
+
+    # Split data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Train model
+    model = train_model(X_train, y_train)
+
+    # Predict stock prices
+    predictions = predict(model, X_test)
+
+    # Print example predictions
+    print("Example predictions:")
+    for i in range(5):
+        print("Predicted:", predictions[i], "Actual:", y_test[i])
