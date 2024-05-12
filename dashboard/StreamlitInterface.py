@@ -96,10 +96,20 @@ def main():
         # Plotting all stocks on a single graph
         plot_all_stocks_on_single_graph(data)
 
-        # Plotting each stock on a separate graph with selected indicators
-        selected_ticker = st.selectbox("Select a ticker to analyze:", tickers)
-        selected_indicators = st.multiselect("Select indicators to plot:", ['EMA', 'BB', 'RSI', 'MACD', 'ATR'])
-        plot_stock_data(data[selected_ticker], selected_ticker, selected_indicators)
+        # Comparative Analysis
+        selected_tickers = st.multiselect("Select tickers for comparative analysis:", tickers)
+        if selected_tickers:
+            for ticker in selected_tickers:
+                selected_indicators = st.multiselect(f"Select indicators to plot for {ticker}:", ['EMA', 'BB', 'RSI', 'MACD', 'ATR'])
+                plot_stock_data(data[ticker], ticker, selected_indicators)
+
+        # Additional Statistics
+        st.subheader("Additional Statistics:")
+        for ticker, stock_data in data.items():
+            st.write(f"**{ticker}**")
+            st.write(f"Average Daily Return: {stock_data['Close'].pct_change().mean()}")
+            st.write(f"Cumulative Return: {stock_data['Close'][-1] / stock_data['Close'][0] - 1}")
+            st.write(f"Volatility (Standard Deviation of Daily Returns): {stock_data['Close'].pct_change().std()}")
 
 if __name__ == "__main__":
     main()
