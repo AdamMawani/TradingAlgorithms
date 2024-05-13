@@ -78,7 +78,7 @@ def calculate_indicators(data):
     return data
 
 def main():
-    st.title("Stock Analysis Interface")
+    st.header("Stock Analysis Interface")
 
     tickers = st.text_input("Enter the stock tickers separated by comma (e.g., AAPL, MSFT):").strip().split(',')
     start_date = st.date_input("Enter the start date:", datetime(2020, 1, 1))
