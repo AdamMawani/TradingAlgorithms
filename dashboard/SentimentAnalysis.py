@@ -15,7 +15,7 @@ def get_news_titles(stock):
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
             # Replace 'css selector' with the actual CSS selector for the news titles
-            news_headlines = soup.select('.news-story__headline')
+            news_headlines = soup.select('.headline__3a97424275')
             for headline in news_headlines:
                 news_titles.append(headline.text.strip())
     except Exception as e:
