@@ -36,11 +36,11 @@ if __name__ == "__main__":
 
     var = calculate_var(portfolio, start_date, end_date)
 
-    table_data = [["Portfolio", f"{printable_confidence}%", f"{var:.2%}"]]
+    table_data = [["Portfolio", f"{var:.2%}"]]
     
     for stock in stocks:
         stock_var = calculate_stock_var(stock, start_date, end_date)
-        table_data.append([stock, f"{printable_confidence}%", f"{stock_var:.2%}"])
+        table_data.append([stock, f"{stock_var:.2%}"])
 
-    headers = ["Asset", "Confidence Level", "Value at Risk"]
+    headers = ["Asset", f"Value at Risk ({printable_confidence})"]
     print(tabulate(table_data, headers=headers, tablefmt="pretty"))
