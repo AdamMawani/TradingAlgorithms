@@ -1,6 +1,7 @@
 import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import seaborn as sns
 import mplfinance as mpf
 
@@ -27,6 +28,26 @@ def calculate_average_change(data):
     changes['Average_Change'] = changes.mean(axis=1)
     return changes
 
+def plot_combined_graphs(changes, data, ticker):
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 14))
+    
+    ax1.set_title('Average Daily Change of Major Indices')
+    ax1.set_xlabel('Date')
+    ax1.set_ylabel('Average Daily Change (%)')
+    ax1.plot(changes.index, changes['Average_Change'], color='blue', label='Average Daily Change')
+    ax1.legend()
+    
+    ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+    fig.autofmt_xdate()
+    
+    df = data[ticker]
+    df['Date'] = df.index
+
+    mpf.plot(df, type='candle', style='charles', ax=ax2, volume=ax2.twinx(), title=f'{ticker} Candlestick Chart', ylabel='Price')
+
+    plt.tight_layout()
+    plt.show()
+
 def plot_average_change(changes):
     plt.figure(figsize=(14, 7))
     plt.title('Average Daily Change of Major Indices')
@@ -36,21 +57,17 @@ def plot_average_change(changes):
     plt.legend()
     plt.show()
 
-# Plot candlestick chart for the first index as an example
 def plot_candlestick(data, ticker):
     df = data[ticker]
     df['Date'] = df.index
     mpf.plot(df, type='candle', style='charles', title=f'{ticker} Candlestick Chart',
              ylabel='Price', volume=True)
 
-# Main execution
 if __name__ == "__main__":
     data = fetch_data(indices)
     data = calculate_daily_change(data)
     average_changes = calculate_average_change(data)
     
-    # Plot average daily change
     plot_average_change(average_changes)
     
-    # Plot candlestick chart for the first index as an example
     plot_candlestick(data, indices[0])
