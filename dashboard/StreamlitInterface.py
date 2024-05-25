@@ -11,6 +11,25 @@ def fetch_stock_data(tickers, start_date, end_date):
         data[ticker] = stock.history(start=start_date, end=end_date)
     return data
 
+def calculate_indicators(data):
+    data['EMA_20'] = data['Close'].ewm(span=20, adjust=False).mean()
+    data['MA_20'] = data['Close'].rolling(window=20).mean()
+    data['std_20'] = data['Close'].rolling(window=20).std()
+    data['Upper_BB'] = data['MA_20'] + (data['std_20'] * 2)
+    data['Lower_BB'] = data['MA_20'] - (data['std_20'] * 2)
+    delta = data['Close'].diff(1)
+    gain = delta.where(delta > 0, 0).rolling(window=14).mean()
+    loss = -delta.where(delta < 0, 0).rolling(window=14).mean()
+    RS = gain / loss
+    data['RSI'] = 100 - (100 / (1 + RS))
+    data['EMA_12'] = data['Close'].ewm(span=12, adjust=False).mean()
+    data['EMA_26'] = data['Close'].ewm(span=26, adjust=False).mean()
+    data['MACD'] = data['EMA_12'] - data['EMA_26']
+    data['Signal_Line'] = data['MACD'].ewm(span=9, adjust=False).mean()
+    data['TR'] = pd.DataFrame(data=(data['High'] - data['Low']).abs(), index=data.index)
+    data['ATR'] = data['TR'].rolling(window=14).mean()
+    return data
+
 def plot_all_stocks_on_single_graph(data):
     plt.figure(figsize=(10, 6))
     for ticker, stock_data in data.items():
@@ -47,30 +66,22 @@ def plot_stock_data(data, ticker, indicators):
     plt.grid(True)
     st.pyplot(plt.gcf())
 
-def calculate_indicators(data):
-    data['EMA_20'] = data['Close'].ewm(span=20, adjust=False).mean()
-    data['MA_20'] = data['Close'].rolling(window=20).mean()
-    data['std_20'] = data['Close'].rolling(window=20).std()
-    data['Upper_BB'] = data['MA_20'] + (data['std_20'] * 2)
-    data['Lower_BB'] = data['MA_20'] - (data['std_20'] * 2)
-    delta = data['Close'].diff(1)
-    gain = delta.where(delta > 0, 0).rolling(window=14).mean()
-    loss = -delta.where(delta < 0, 0).rolling(window=14).mean()
-    RS = gain / loss
-    data['RSI'] = 100 - (100 / (1 + RS))
-    data['EMA_12'] = data['Close'].ewm(span=12, adjust=False).mean()
-    data['EMA_26'] = data['Close'].ewm(span=26, adjust=False).mean()
-    data['MACD'] = data['EMA_12'] - data['EMA_26']
-    data['Signal_Line'] = data['MACD'].ewm(span=9, adjust=False).mean()
-    data['TR'] = pd.DataFrame(data=(data['High'] - data['Low']).abs(), index=data.index)
-    data['ATR'] = data['TR'].rolling(window=14).mean()
-    return data
+def display_statistics(data):
+    st.subheader("Additional Statistics")
+    for ticker, stock_data in data.items():
+        avg_daily_return = stock_data['Close'].pct_change().mean()
+        cumulative_return = (stock_data['Close'][-1] / stock_data['Close'][0]) - 1
+        volatility = stock_data['Close'].pct_change().std()
+        st.write(f"**{ticker}**")
+        st.write(f"Average Daily Return: {avg_daily_return:.6f}")
+        st.write(f"Cumulative Return: {cumulative_return:.6f}")
+        st.write(f"Volatility (Standard Deviation of Daily Returns): {volatility:.6f}")
 
 def main():
-    st.header("Stock Analysis Interface")
+    st.title("Stock Analysis Interface")
     st.write("Enter stock tickers (comma separated) and select a date range to analyze stock data.")
 
-    tickers = st.text_input("Stock Tickers (comma separated):", "AAPL, MSFT").strip().split(',')
+    tickers = st.text_input("Stock Tickers (comma separated):", "AAPL, MSFT").strip().upper().split(',')
     start_date = st.date_input("Start Date:", datetime(2020, 1, 1))
     end_date = st.date_input("End Date:", datetime.today())
 
@@ -85,17 +96,12 @@ def main():
 
         plot_all_stocks_on_single_graph(data)
 
-        selected_tickers = st.multiselect("Select Tickers for Comparative Analysis:", tickers, default=tickers)
+        selected_tickers = st.multiselect("Select Tickers for Detailed Analysis:", tickers, default=tickers)
         for ticker in selected_tickers:
             selected_indicators = st.multiselect(f"Select Indicators for {ticker}:", ['EMA', 'BB', 'RSI', 'MACD', 'ATR'], default=['EMA'])
             plot_stock_data(data[ticker], ticker, selected_indicators)
 
-        st.subheader("Additional Statistics")
-        for ticker, stock_data in data.items():
-            st.write(f"**{ticker}**")
-            st.write(f"Average Daily Return: {stock_data['Close'].pct_change().mean():.6f}")
-            st.write(f"Cumulative Return: {(stock_data['Close'][-1] / stock_data['Close'][0] - 1):.6f}")
-            st.write(f"Volatility (Standard Deviation of Daily Returns): {stock_data['Close'].pct_change().std():.6f}")
+        display_statistics(data)
 
 if __name__ == "__main__":
     main()
