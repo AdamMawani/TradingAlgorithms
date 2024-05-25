@@ -1,7 +1,6 @@
 import yfinance as yf
 import streamlit as st
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
 
@@ -21,7 +20,7 @@ def plot_all_stocks_on_single_graph(data):
     plt.ylabel('Price')
     plt.legend()
     plt.grid(True)
-    st.pyplot()
+    st.pyplot(plt.gcf())
 
 def plot_stock_data(data, ticker, indicators):
     plt.figure(figsize=(10, 6))
@@ -46,43 +45,34 @@ def plot_stock_data(data, ticker, indicators):
     plt.ylabel('Price')
     plt.legend()
     plt.grid(True)
-    st.pyplot()
+    st.pyplot(plt.gcf())
 
 def calculate_indicators(data):
-    # Exponential Moving Average (EMA)
     data['EMA_20'] = data['Close'].ewm(span=20, adjust=False).mean()
-
-    # Bollinger Bands
     data['MA_20'] = data['Close'].rolling(window=20).mean()
     data['std_20'] = data['Close'].rolling(window=20).std()
     data['Upper_BB'] = data['MA_20'] + (data['std_20'] * 2)
     data['Lower_BB'] = data['MA_20'] - (data['std_20'] * 2)
-
-    # Relative Strength Index (RSI)
     delta = data['Close'].diff(1)
-    gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+    gain = delta.where(delta > 0, 0).rolling(window=14).mean()
+    loss = -delta.where(delta < 0, 0).rolling(window=14).mean()
     RS = gain / loss
     data['RSI'] = 100 - (100 / (1 + RS))
-
-    # Moving Average Convergence Divergence (MACD)
     data['EMA_12'] = data['Close'].ewm(span=12, adjust=False).mean()
     data['EMA_26'] = data['Close'].ewm(span=26, adjust=False).mean()
     data['MACD'] = data['EMA_12'] - data['EMA_26']
     data['Signal_Line'] = data['MACD'].ewm(span=9, adjust=False).mean()
-
-    # Average True Range (ATR)
-    data['TR'] = pd.DataFrame(data = (data['High'] - data['Low']).abs(), index = data.index)
+    data['TR'] = pd.DataFrame(data=(data['High'] - data['Low']).abs(), index=data.index)
     data['ATR'] = data['TR'].rolling(window=14).mean()
-
     return data
 
 def main():
     st.header("Stock Analysis Interface")
+    st.write("Enter stock tickers (comma separated) and select a date range to analyze stock data.")
 
-    tickers = st.text_input("Enter the stock tickers separated by comma (e.g., AAPL, MSFT):").strip().split(',')
-    start_date = st.date_input("Enter the start date:", datetime(2020, 1, 1))
-    end_date = st.date_input("Enter the end date:", datetime.today())
+    tickers = st.text_input("Stock Tickers (comma separated):", "AAPL, MSFT").strip().split(',')
+    start_date = st.date_input("Start Date:", datetime(2020, 1, 1))
+    end_date = st.date_input("End Date:", datetime.today())
 
     if st.button("Fetch Data"):
         data = fetch_stock_data(tickers, start_date, end_date)
@@ -93,23 +83,19 @@ def main():
         for ticker, stock_data in data.items():
             data[ticker] = calculate_indicators(stock_data)
 
-        # Plotting all stocks on a single graph
         plot_all_stocks_on_single_graph(data)
 
-        # Comparative Analysis
-        selected_tickers = st.multiselect("Select tickers for comparative analysis:", tickers)
-        if selected_tickers:
-            for ticker in selected_tickers:
-                selected_indicators = st.multiselect(f"Select indicators to plot for {ticker}:", ['EMA', 'BB', 'RSI', 'MACD', 'ATR'])
-                plot_stock_data(data[ticker], ticker, selected_indicators)
+        selected_tickers = st.multiselect("Select Tickers for Comparative Analysis:", tickers, default=tickers)
+        for ticker in selected_tickers:
+            selected_indicators = st.multiselect(f"Select Indicators for {ticker}:", ['EMA', 'BB', 'RSI', 'MACD', 'ATR'], default=['EMA'])
+            plot_stock_data(data[ticker], ticker, selected_indicators)
 
-        # Additional Statistics
-        st.subheader("Additional Statistics:")
+        st.subheader("Additional Statistics")
         for ticker, stock_data in data.items():
             st.write(f"**{ticker}**")
-            st.write(f"Average Daily Return: {stock_data['Close'].pct_change().mean()}")
-            st.write(f"Cumulative Return: {stock_data['Close'][-1] / stock_data['Close'][0] - 1}")
-            st.write(f"Volatility (Standard Deviation of Daily Returns): {stock_data['Close'].pct_change().std()}")
+            st.write(f"Average Daily Return: {stock_data['Close'].pct_change().mean():.6f}")
+            st.write(f"Cumulative Return: {(stock_data['Close'][-1] / stock_data['Close'][0] - 1):.6f}")
+            st.write(f"Volatility (Standard Deviation of Daily Returns): {stock_data['Close'].pct_change().std():.6f}")
 
 if __name__ == "__main__":
     main()
