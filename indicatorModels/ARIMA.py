@@ -3,6 +3,7 @@ import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
 import matplotlib.pyplot as plt
 
+# Portfolio can be adjusted based on selections and weightings
 portfolio = {"ENB": 0.15, "QQQ": 0.15, "SPY": 0.05, "NVDA": 0.1, "MSFT": 0.07, "GOOG": 0.05, "VZ": 0.07, "T": 0.05, "AMZN": 0.07, "C": 0.03, "RY": 0.05, "BNS": 0.03, "BAC": 0.03, "MA": 0.05, "UBER": 0.05}
 
 start_date = "2020-01-01"
